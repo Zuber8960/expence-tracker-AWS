@@ -33,8 +33,8 @@ exports.signUp = (req, res, next) => {
 
 }
 
-function generateAccessToken(id, name) {
-    return jwt.sign({ id: id, name: name }, process.env.secretKey);
+function generateAccessToken(id) {
+    return jwt.sign(id , process.env.secretKey);
 }
 
 
@@ -49,6 +49,7 @@ exports.login = async (req, res, next) => {
 
         const user = await User.findAll({ where: { email: email } })
 
+        console.log(user);
         if (user.length == 0) {
             return res.status(404).json({ success: false, message: `Error(404) : User ${email} does not exist` });
         } else {
@@ -57,7 +58,12 @@ exports.login = async (req, res, next) => {
                     console.log(err);
                 }
                 if (response) {
-                    return res.status(201).json({ success: true, message: `User : ${user[0].name} logged in successfully.`, token: generateAccessToken(user[0].id, user[0].name) });
+                    // console.log(`responce ===>` ,response);
+                    console.log(`user ==>`, user[0].id,user[0].name);
+                    console.log(`secretkey ==>`, process.env.secretKey);
+                    let token = generateAccessToken(user[0].id);
+                    console.log(`token===>` , token);
+                    return res.status(201).json({ success: true, message: `User : ${user[0].name} logged in successfully.`, token: token });
                 } else {
                     return res.status(401).json({ success: false, message: `Error(401) : Entered wrong passward !` });
                 }
@@ -96,6 +102,7 @@ updloadToS3 = (data, filename) => {
         })
     })
 }
+
 const Filedownloaded = require('../models/filedownloaded');
 
 exports.download = async (req, res, next) => {

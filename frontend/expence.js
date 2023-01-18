@@ -221,7 +221,7 @@ function showUserName(name) {
 
 async function downloadExpence() {
     try {
-        const response = await axios.get('http://localhost:3000/user/download', { headers: { "Authorization": token } });
+        const response = await axios.get(`${backendApis}/user/download` , { headers: { "Authorization": token } });
         if (response.status === 200) {
             console.log(response);
             let a = document.createElement("a");
